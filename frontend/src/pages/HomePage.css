@@ -1,0 +1,57 @@
+/* HomePage.css */
+
+/* Keyframe for the glowing orb animation */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 100px 80px rgba(0, 150, 255, 0.4);
+    transform: scale(0.9);
+  }
+  50% {
+    box-shadow: 0 0 120px 100px rgba(255, 0, 0, 0.6);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 100px 80px rgba(0, 150, 255, 0.4);
+    transform: scale(0.9);
+  }
+}
+
+.glowing-orb {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vw; /* Adjust size based on viewport width */
+  height: 70vw; /* To keep it round */
+  max-width: 800px;
+  max-height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 150, 255, 0.6), rgba(255, 0, 0, 0.4));
+  filter: blur(80px); /* Creates the soft, light-like effect */
+  animation: glow-pulse 10s infinite ease-in-out;
+  pointer-events: none; /* Allows clicks to pass through */
+  z-index: 0;
+}
+
+/* Keyframe for the fade-in animation on scroll */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-section {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.scroll-section.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}

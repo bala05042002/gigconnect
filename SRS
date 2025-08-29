@@ -1,0 +1,61 @@
+### Software Requirements Specification (SRS)
+
+```
+1. INTRODUCTION
+    1.1 Purpose
+        This document outlines the functional and non-functional requirements for "GigConnect," a hyperlocal freelance marketplace. The platform connects clients with local freelancers for specific services via a mobile-responsive web application.
+    1.2 Scope
+        GigConnect will manage user authentication, profile creation, gig posting, search functionality, real-time messaging, a review system, and secure payment processing. The application is a web-based platform optimized for mobile access.
+    1.3 Definitions and Acronyms
+        - SRS: Software Requirements Specification
+        - JWT: JSON Web Token
+        - Gig: A job posted by a client.
+        - Client: A user who posts jobs.
+        - Freelancer: A user who offers services.
+
+---
+2. OVERALL DESCRIPTION
+    2.1 Product Perspective
+        GigConnect is a standalone web application that integrates with external payment gateways (Razorpay/Stripe).
+    2.2 Product Functions
+        - Dual-Role User Authentication
+        - Freelancer Profile Management
+        - Gig Posting and Management
+        - Advanced Search & Filtering
+        - Real-time Messaging System
+        - Review & Rating System
+        - Secure Payment Integration
+    2.3 User Characteristics
+        - Clients: Individuals or businesses needing local services.
+        - Freelancers: Skilled individuals seeking local job opportunities.
+
+---
+3. FUNCTIONAL REQUIREMENTS
+    3.1 FR-01: Dual-Role User Authentication
+        - The system shall allow users to register as either "Client" or "Freelancer."
+        - It shall use JWT for secure session management.
+    3.2 FR-02: Freelancer Profile Management
+        - Freelancers shall be able to create and edit detailed profiles, including skills, portfolio, rates, and reviews.
+    3.3 FR-03: Gig Posting & Management
+        - Clients shall be able to create, edit, and manage job postings with specific requirements.
+    3.4 FR-04: Advanced Search & Filtering
+        - The system shall provide hyperlocal search for gigs and freelancers, with filters for skills, location, price, and ratings.
+    3.5 FR-05: Real-time Messaging System
+        - The system shall have an integrated chat for direct communication between clients and freelancers.
+    3.6 FR-06: Review & Rating System
+        - The system shall allow both parties to provide a two-way rating and review after a gig is completed.
+    3.7 FR-07: Secure Payment Integration
+        - The system shall integrate with Razorpay or Stripe to facilitate secure transactions, including milestone payments.
+
+---
+4. NON-FUNCTIONAL REQUIREMENTS
+    4.1 NFR-01: Performance
+        - The application shall load within 5 seconds. Search results should appear within 2 seconds.
+    4.2 NFR-02: Security
+        - All user and payment data must be encrypted.
+        - User authentication must be handled securely with JWT.
+    4.3 NFR-03: Usability
+        - The user interface must be intuitive and mobile-responsive.
+    4.4 NFR-04: Scalability
+        - The architecture must support a growing number of users and gigs without performance degradation.
+```

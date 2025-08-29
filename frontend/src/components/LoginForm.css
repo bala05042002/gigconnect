@@ -1,0 +1,58 @@
+/* Full dark background with animated gradient orb */
+.bg-dark-bg {
+  background: #0a0a0a;
+  position: relative;
+}
+
+/* Glowing orb animation bottom-right */
+.glow-orb {
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,0,255,0.6) 0%, rgba(255,0,0,0.6) 50%, transparent 80%);
+  filter: blur(150px);
+  animation: orbPulse 6s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes orbPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+    background: radial-gradient(circle, rgba(0,0,255,0.6) 0%, rgba(255,0,0,0.4) 50%, transparent 80%);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.85;
+    background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, rgba(0,0,255,0.5) 50%, transparent 80%);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+    background: radial-gradient(circle, rgba(0,0,255,0.6) 0%, rgba(255,0,0,0.4) 50%, transparent 80%);
+  }
+}
+
+/* Glass effect form */
+.glass-form {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.2);
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .glass-form {
+    padding: 6rem 1.5rem 4rem 1.5rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .glass-form {
+    padding: 4rem 2rem;
+  }
+}
