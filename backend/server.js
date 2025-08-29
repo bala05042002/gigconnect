@@ -1,4 +1,5 @@
 import express from 'express';
+const path = require('path');
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { Server } from 'socket.io';
@@ -40,6 +41,8 @@ app.use('/api/bids', bidRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use("/api/notifications", notificationRoutes);
 
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+
 let onlineUsers = {}; // { userId: socketId }
 
 // Socket.IO connection
@@ -80,6 +83,10 @@ const PORT = process.env.PORT || 5000;
 app.get('/', (req, res) => {
     res.send('Hi')
 })
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+});
 
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
