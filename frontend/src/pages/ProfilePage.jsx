@@ -17,7 +17,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/profiles/${userId}`);
+        const { data } = await axios.get(`https://gig-server.onrender.com/api/profiles/${userId}`);
         setProfile(data);
       } catch (err) {
         setError('Profile not found.');

@@ -15,7 +15,7 @@ const ChatPage = () => {
   const scrollRef = useRef();
 
   useEffect(() => {
-    socket = io('http://localhost:5000');
+    socket = io('https://gig-server.onrender.com');
     socket.emit('addUser', user._id);
 
     socket.on('getMessage', (data) => {
@@ -29,7 +29,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const { data } = await axios.get(`http://localhost:5000/api/messages/${receiverId}`, {
+      const { data } = await axios.get(`https://gig-server.onrender.com/api/messages/${receiverId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setMessages(data);
@@ -50,7 +50,7 @@ const ChatPage = () => {
     socket.emit('sendMessage', message);
 
     // Save in DB
-    await axios.post('http://localhost:5000/api/messages', message, {
+    await axios.post('https://gig-server.onrender.com/api/messages', message, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
 

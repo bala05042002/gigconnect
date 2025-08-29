@@ -13,7 +13,7 @@ const ReviewForm = ({ gigId, reviewedUserId, token, onReviewAdded, existingRevie
 
     try {
       const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } };
-      const { data } = await axios.post('http://localhost:5000/api/reviews', { gigId, reviewedUserId, rating, comment }, config);
+      const { data } = await axios.post('https://gig-server.onrender.com/api/reviews', { gigId, reviewedUserId, rating, comment }, config);
       toast.success('Review submitted successfully!');
       setSubmitted(true);
       if (onReviewAdded) onReviewAdded(data);

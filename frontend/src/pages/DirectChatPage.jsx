@@ -18,7 +18,7 @@ const DirectChatPage = ({ currentUserId }) => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/direct-chat/${currentUserId}/${freelancerId}`
+          `https://gig-server.onrender.com/api/direct-chat/${currentUserId}/${freelancerId}`
         );
         setMessages(data);
       } catch (err) {
@@ -31,7 +31,7 @@ const DirectChatPage = ({ currentUserId }) => {
 
   // --- Socket.IO connection ---
   useEffect(() => {
-    socket = io('http://localhost:5000', { query: { userId: currentUserId } });
+    socket = io('https://gig-server.onrender.com', { query: { userId: currentUserId } });
 
     // Real-time message listener
     socket.on('receive_direct_message', (message) => {
@@ -80,7 +80,7 @@ const DirectChatPage = ({ currentUserId }) => {
       socket.emit('send_direct_message', messageData);
 
       // Save to backend
-      await axios.post('http://localhost:5000/api/direct-chat', messageData);
+      await axios.post('https://gig-server.onrender.com/api/direct-chat', messageData);
 
       // Update local state
       setMessages((prev) => [...prev, messageData]);

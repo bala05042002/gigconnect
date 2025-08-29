@@ -34,7 +34,7 @@ const HomePage = () => {
     // Fetch gigs from API
     const fetchGigs = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/gigs') // Adjust the URL if needed
+        const { data } = await axios.get('https://gig-server.onrender.com/api/gigs') // Adjust the URL if needed
         setGigs(data);
       } catch (error) {
         console.error('Error fetching gigs:', error);

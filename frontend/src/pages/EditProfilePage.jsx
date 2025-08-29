@@ -36,7 +36,7 @@ const EditProfilePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/profiles/${user._id}`);
+        const { data } = await axios.get(`https://gig-server.onrender.com/api/profiles/${user._id}`);
         setFormData({
           bio: data.bio || '',
           skills: data.skills || [],
@@ -122,7 +122,7 @@ const EditProfilePage = () => {
       const config = {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
       };
-      await axios.post('http://localhost:5000/api/profiles', formData, config);
+      await axios.post('https://gig-server.onrender.com/api/profiles', formData, config);
       toast.success('Profile updated successfully!');
       navigate(`/profiles/${user._id}`);
     } catch (err) {

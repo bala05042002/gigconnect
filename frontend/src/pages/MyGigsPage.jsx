@@ -37,7 +37,7 @@ const MyGigsPage = () => {
       }
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get(`http://localhost:5000/api/gigs/mygigs`, config);
+        const { data } = await axios.get(`https://gig-server.onrender.com/api/gigs/mygigs`, config);
         setGigs(data);
       } catch (error) {
         toast.error('Failed to fetch your gigs.');
@@ -66,7 +66,7 @@ const MyGigsPage = () => {
   const handleEditSubmit = async (gigId) => {
     try {
       const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(`http://localhost:5000/api/gigs/${gigId}`, editFormData, config);
+      const { data } = await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}`, editFormData, config);
       setGigs((prev) => prev.map((g) => (g._id === gigId ? data : g)));
       toast.success('Gig updated successfully!');
       setEditingGigId(null);

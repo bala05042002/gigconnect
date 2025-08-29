@@ -71,7 +71,7 @@ const CreateGigPage = () => {
       const payload = { ...formData, location };
       console.log('Submitting payload:', payload);
 
-      const response = await axios.post('http://localhost:5000/api/gigs', payload, config);
+      const response = await axios.post('https://gig-server.onrender.com/api/gigs', payload, config);
 
       console.log('Backend response:', response.data);
       toast.success('Gig created successfully!');

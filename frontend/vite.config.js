@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/postcss'; // Correctly import the PostCSS 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: Number(process.env.VITE_PORT) || 5173
+  },
   css: {
     postcss: {
       plugins: [

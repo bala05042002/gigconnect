@@ -25,6 +25,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 
 const App = () => {
+  console.log(import.meta.env.VITE_PORT)
   const currentUserId = localStorage.getItem('userId'); // Or from your auth context
 
   return (

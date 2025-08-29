@@ -48,23 +48,23 @@ const GigDetailPage = () => {
             setLoading(true);
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const gigRes = await axios.get(`http://localhost:5000/api/gigs/${gigId}`, config);
+                const gigRes = await axios.get(`https://gig-server.onrender.com/api/gigs/${gigId}`, config);
                 const fetchedGig = gigRes.data;
                 setGig(fetchedGig);
                 setAcceptedBid(fetchedGig.acceptedBid);
 
-                const messagesRes = await axios.get(`http://localhost:5000/api/messages/${gigId}`, config);
+                const messagesRes = await axios.get(`https://gig-server.onrender.com/api/messages/${gigId}`, config);
                 setMessages(messagesRes.data || []);
 
                 if (user.role === 'client') {
-                    const bidsRes = await axios.get(`http://localhost:5000/api/bids/${gigId}`, config);
+                    const bidsRes = await axios.get(`https://gig-server.onrender.com/api/bids/${gigId}`, config);
                     setBids(bidsRes.data || []);
                 } else if (user.role === 'freelancer') {
-                    const myBidsRes = await axios.get(`http://localhost:5000/api/bids/mybids`, config);
+                    const myBidsRes = await axios.get(`https://gig-server.onrender.com/api/bids/mybids`, config);
                     setMyBids(myBidsRes.data || []);
                 }
 
-                const reviewsRes = await axios.get(`http://localhost:5000/api/reviews/gig/${gigId}`);
+                const reviewsRes = await axios.get(`https://gig-server.onrender.com/api/reviews/gig/${gigId}`);
                 setReviews(reviewsRes.data || []);
 
             } catch (err) {
@@ -79,7 +79,7 @@ const GigDetailPage = () => {
 
     useEffect(() => {
         if (gig) {
-            socket = io('http://localhost:5000');
+            socket = io('https://gig-server.onrender.com');
             socket.emit('join_gig_room', gigId);
             socket.on('receive_message', (message) => {
                 setMessages((prev) => {
@@ -100,7 +100,7 @@ const GigDetailPage = () => {
 
         try {
             const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('http://localhost:5000/api/messages', { receiverId, gigId, content: newMessage }, config);
+            const { data } = await axios.post('https://gig-server.onrender.com/api/messages', { receiverId, gigId, content: newMessage }, config);
             socket.emit('send_message', data);
             setNewMessage('');
         } catch (err) {
@@ -114,7 +114,7 @@ const GigDetailPage = () => {
 
         try {
             const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('http://localhost:5000/api/bids', { gigId, proposal: bidFormData.proposal, price: Number(bidFormData.price) }, config);
+            const { data } = await axios.post('https://gig-server.onrender.com/api/bids', { gigId, proposal: bidFormData.proposal, price: Number(bidFormData.price) }, config);
             toast.success('Your application has been submitted!');
             setShowBidForm(false);
 
@@ -123,7 +123,7 @@ const GigDetailPage = () => {
 
             // Optional: refresh client-side bids
             if (user.role === 'client') {
-                const { data: bidsData } = await axios.get(`http://localhost:5000/api/bids/${gigId}`, config);
+                const { data: bidsData } = await axios.get(`https://gig-server.onrender.com/api/bids/${gigId}`, config);
                 setBids(bidsData || []);
             }
         } catch (err) {
@@ -135,7 +135,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Accept this bid?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.put(`http://localhost:5000/api/bids/${bidId}/accept`, {}, config);
+            const { data } = await axios.put(`https://gig-server.onrender.com/api/bids/${bidId}/accept`, {}, config);
             toast.success('Bid accepted! Gig is now in-progress.');
             setGig(prev => ({ ...prev, status: data.gigStatus }));
         } catch (err) {
@@ -147,7 +147,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Mark gig as finished? The client will be notified to pay.')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/gigs/${gigId}/freelancer-finish`, {}, config);
+            await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}/freelancer-finish`, {}, config);
             toast.success('Gig marked as finished. Awaiting client payment!');
             setGig(prev => ({ ...prev, status: 'awaiting_payment' }));
         } catch (err) {
@@ -159,7 +159,7 @@ const GigDetailPage = () => {
     const handleClientPay = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data: { order, key } } = await axios.post(`http://localhost:5000/api/gigs/${gigId}/create-order`, {}, config);
+            const { data: { order, key } } = await axios.post(`https://gig-server.onrender.com/api/gigs/${gigId}/create-order`, {}, config);
 
             const options = {
                 key: key,
@@ -171,7 +171,7 @@ const GigDetailPage = () => {
                 handler: async (response) => {
                     try {
                         const verifyConfig = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` } };
-                        const { data } = await axios.post(`http://localhost:5000/api/gigs/${gigId}/verify-payment`, {
+                        const { data } = await axios.post(`https://gig-server.onrender.com/api/gigs/${gigId}/verify-payment`, {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
@@ -204,7 +204,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Are you sure you want to delete this gig?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/gigs/${gigId}`, config);
+            await axios.delete(`https://gig-server.onrender.com/api/gigs/${gigId}`, config);
             toast.success('Gig has been deleted.');
             navigate('/gigs');
         } catch (err) {
@@ -216,7 +216,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Are you sure you want to request a cancellation?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/gigs/${gigId}/cancel-request`, {}, config);
+            await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}/cancel-request`, {}, config);
             toast.success('Cancellation request sent.');
             setGig(prev => ({ ...prev, status: 'cancellation_pending' }));
         } catch (err) {
@@ -228,7 +228,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Approve cancellation?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/gigs/${gigId}/approve-cancel`, {}, config);
+            await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}/approve-cancel`, {}, config);
             toast.success('Cancellation approved.');
             setGig(prev => ({ ...prev, status: 'cancelled' }));
         } catch (err) {
@@ -240,7 +240,7 @@ const GigDetailPage = () => {
         if (!window.confirm('Reject cancellation request?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/gigs/${gigId}/reject-cancel`, {}, config);
+            await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}/reject-cancel`, {}, config);
             toast.success('Cancellation rejected.');
             setGig(prev => ({ ...prev, status: 'in-progress' }));
         } catch (err) {

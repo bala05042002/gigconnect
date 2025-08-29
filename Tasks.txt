@@ -4,3 +4,6 @@ NANCY :-
         * To build create gig component with named CreateGigPage.jsx in the frontend.
         * There is already gig model was there in the gigModel.js in the models in backend.
         * Please do backend controller for creating CreateGigPage to get the data from that and also update in the router of gigRoutes.js
+
+
+** Commit : git commit -m "Initial commit"

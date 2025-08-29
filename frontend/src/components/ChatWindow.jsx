@@ -15,7 +15,7 @@ const ChatWindow = ({ onClose, chatPartner, receiverId }) => {
             if (!chatPartner) return;
             try {
                 // Fetch real messages from the new backend endpoint
-                const response = await axios.get(`http://localhost:5000/api/direct-chat/${user._id}/${receiverId}`, {
+                const response = await axios.get(`${import.meta.env.URL}/direct-chat/${user._id}/${receiverId}`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -38,7 +38,7 @@ const ChatWindow = ({ onClose, chatPartner, receiverId }) => {
 
         try {
             // Send the new message to the new backend endpoint
-            const res = await axios.post('http://localhost:5000/api/direct-chat', {
+            const res = await axios.post('https://gig-server.onrender.com/api/direct-chat', {
                 senderId: user._id,
                 receiverId: receiverId,
                 text: newMessage,

@@ -43,7 +43,7 @@ const GigListPage = () => {
     const fetchAllGigs = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get('http://localhost:5000/api/gigs');
+        const { data } = await axios.get(`https://gig-server.onrender.com/api/gigs`);
         setGigs(data);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to fetch gigs.');
@@ -63,7 +63,7 @@ const GigListPage = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/gigs/search/location?lat=${lat}&lon=${lon}&radius=${radius}`
+        `https://gig-server.onrender.com/api/gigs/search/location?lat=${lat}&lon=${lon}&radius=${radius}`
       );
       setGigs(data);
       toast.success(`${data.length} gigs found nearby!`);

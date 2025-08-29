@@ -21,7 +21,7 @@ const LoginForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/users/login', formData);
+      const { data } = await axios.post('https://gig-server.onrender.com/api/users/login', formData);
       login(data);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');

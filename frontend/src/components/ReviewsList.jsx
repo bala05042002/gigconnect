@@ -11,7 +11,7 @@ const ReviewsList = ({ userId }) => {
     const fetchReviews = async () => {
       try {
         // Backend should populate 'gig' and 'user'
-        const { data } = await axios.get(`http://localhost:5000/api/reviews/user/${userId}`);
+        const { data } = await axios.get(`https://gig-server.onrender.com/api/reviews/user/${userId}`);
         setReviews(data);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to fetch reviews.');

@@ -8,7 +8,7 @@ const FreelancerHeader = ({ freelancerId }) => {
     const fetchFreelancer = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/profiles/${freelancerId}`
+          `https://gig-server.onrender.com/api/profiles/${freelancerId}`
         );
         setFreelancer({
           name: data.user.name,

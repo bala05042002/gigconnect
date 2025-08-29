@@ -16,7 +16,7 @@ const FreelancerPage = ({ currentUserId }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket = io('http://localhost:5000', { query: { userId: currentUserId } });
+    socket = io('https://gig-server.onrender.com', { query: { userId: currentUserId } });
     socket.emit('user_online', currentUserId);
 
     socket.on('update_user_status', ({ userId, status }) => {
@@ -29,7 +29,7 @@ const FreelancerPage = ({ currentUserId }) => {
   const fetchFreelancers = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('http://localhost:5000/api/profiles');
+      const { data } = await axios.get('https://gig-server.onrender.com/api/profiles');
       const freelancersOnly = data.filter((f) => f.user.role === 'freelancer');
       setFreelancers(freelancersOnly);
 
@@ -38,7 +38,7 @@ const FreelancerPage = ({ currentUserId }) => {
         freelancersOnly.map(async (f) => {
           try {
             const res = await axios.get(
-              `http://localhost:5000/api/reviews/user/${f.user._id}/average`
+              `https://gig-server.onrender.com/api/reviews/user/${f.user._id}/average`
             );
             ratingsData[f.user._id] = res.data;
           } catch {
