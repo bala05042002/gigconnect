@@ -78,15 +78,15 @@ io.on('connection', (socket) => {
 
 app.set('io', io);
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+});
 const PORT = process.env.PORT || 5000;
 
 app.get('/', (req, res) => {
     res.send('Hi')
 })
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
-});
 
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
