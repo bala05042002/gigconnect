@@ -47,7 +47,7 @@ const HomePage = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden flex flex-col text-white font-sans bg-gray-900">
-      <div className="glowing-orb"></div>
+      {/* <div className="glowing-orb"></div> */}
 
       {/* Hero Section */}
       <section className="scroll-section flex flex-col items-center justify-center min-h-screen text-center px-4 py-20 relative z-10">
