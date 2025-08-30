@@ -13,16 +13,33 @@ const CreateGigPage = () => {
     description: "",
     category: "Web Development",
     price: "",
+    locationText: "", // <-- New: location input
   });
   const [loading, setLoading] = useState(false);
+  const [coords, setCoords] = useState({ lat: 0, lon: 0 }); // store coordinates
 
-  const { title, description, category, price } = formData;
+  const { title, description, category, price, locationText } = formData;
 
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const useCurrentLocation = async () => {
+    try {
+      const position = await getCurrentPosition();
+      setCoords({ lat: position.lat, lon: position.lon });
+      setFormData((prev) => ({
+        ...prev,
+        locationText: "Current Location",
+      }));
+      toast.success("Using your current location!");
+    } catch (error) {
+      console.warn("Failed to get location:", error);
+      toast.error("Could not fetch your current location.");
+    }
   };
 
   const onSubmit = async (e) => {
@@ -41,17 +58,20 @@ const CreateGigPage = () => {
       return;
     }
 
-    try {
-      let lat = 0,
-        lon = 0;
+    if (!locationText) {
+      toast.error("Please enter a location or use current location.");
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const position = await getCurrentPosition();
-        lat = position.lat;
-        lon = position.lon;
-      } catch (geoError) {
-        console.warn("Geolocation failed, using default coordinates:", geoError);
-        toast.info("Geolocation failed. Using default location.");
+    try {
+      let lat = coords.lat;
+      let lon = coords.lon;
+
+      // If user typed location but no coords, just use defaults (0,0)
+      if (locationText !== "Current Location") {
+        lat = 0;
+        lon = 0;
       }
 
       const location = {
@@ -67,21 +87,17 @@ const CreateGigPage = () => {
       };
 
       const payload = { ...formData, location };
-      console.log("Submitting payload:", payload);
+      delete payload.locationText;
 
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/gigs`, payload, config);
 
-      console.log("Backend response:", response.data);
       toast.success("Gig created successfully!");
       navigate("/gigs");
     } catch (error) {
       console.error("Error creating gig:", error);
-
       if (error.response) {
-        console.error("Backend error response:", error.response.data);
         toast.error(`Failed to create gig: ${error.response.data.message || "Unknown error"}`);
       } else if (error.request) {
-        console.error("No response received:", error.request);
         toast.error("Failed to create gig: No response from server.");
       } else {
         toast.error(`Failed to create gig: ${error.message}`);
@@ -210,6 +226,27 @@ const CreateGigPage = () => {
                       placeholder="e.g., 100"
                     />
                   </div>
+                </div>
+
+                {/* New Location Input */}
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                  <input
+                    id="locationText"
+                    name="locationText"
+                    type="text"
+                    value={locationText}
+                    onChange={onChange}
+                    required
+                    className="flex-1 px-4 py-3 rounded-xl bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    placeholder="Enter location or use current location"
+                  />
+                  <button
+                    type="button"
+                    onClick={useCurrentLocation}
+                    className="px-4 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+                  >
+                    Use My Location
+                  </button>
                 </div>
 
                 <div className="flex justify-end">

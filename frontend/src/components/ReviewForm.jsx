@@ -23,7 +23,7 @@ const ReviewForm = ({ gigId, reviewedUserId, token, onReviewAdded, existingRevie
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mt-8">
+    <div className="bg-black/90 text-white rounded-lg shadow-md p-6 mt-8">
       {submitted ? (
         <div>
           <h2 className="text-2xl font-bold mb-4">Your Review</h2>

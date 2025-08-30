@@ -238,7 +238,7 @@ const EditProfilePage = () => {
           </div>
 
           {/* Skills */}
-          <div>
+          {user.role === 'freelancer' && <div>
             <label className="block text-white font-medium mb-1">Skills (comma-separated)</label>
             <input
               type="text"
@@ -248,7 +248,7 @@ const EditProfilePage = () => {
               className="w-full px-4 py-2 rounded-md border border-gray-600 bg-gray-900 text-white focus:ring focus:ring-indigo-500 focus:border-indigo-400"
               placeholder="e.g., JavaScript, React, Node.js"
             />
-          </div>
+          </div>}
 
           {/* Portfolio */}
           <div>

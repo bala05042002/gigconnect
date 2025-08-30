@@ -12,7 +12,7 @@ const GigDetailPage = () => {
     const { gigId } = useParams();
     const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
-    const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null); // <-- scrollable container
 
     const [gig, setGig] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -26,8 +26,13 @@ const GigDetailPage = () => {
     const [reviews, setReviews] = useState([]);
     const [isCancelling, setIsCancelling] = useState(false);
 
+    console.log(gig);
+
+    // Scroll to bottom whenever messages update
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
     }, [messages]);
 
     useEffect(() => {
@@ -118,10 +123,8 @@ const GigDetailPage = () => {
             toast.success('Your application has been submitted!');
             setShowBidForm(false);
 
-            // Update myBids immediately
             setMyBids((prev) => [...prev, data]);
 
-            // Optional: refresh client-side bids
             if (user.role === 'client') {
                 const { data: bidsData } = await axios.get(`${import.meta.env.VITE_API_URL}/api/bids/${gigId}`, config);
                 setBids(bidsData || []);
@@ -284,6 +287,7 @@ const GigDetailPage = () => {
                     <p>Price: <span className="text-green-600 font-semibold">₹{gig?.price}</span></p>
                     <p>Category: <span className="text-indigo-600 font-semibold">{gig?.category}</span></p>
                     <p>Posted By: <Link to={`/profiles/${gig?.user?._id}`} className="text-indigo-600 hover:underline">{gig?.user?.name}</Link></p>
+                    <p>Posted On: {new Date(gig.createdAt).toLocaleString()}</p>
                     <p>Status: <span className={`font-medium ${gig?.status === 'open' ? 'text-green-400' : 'text-yellow-400'}`}>{gig?.status}</span></p>
                     {isGigOwner && gig?.status === 'awaiting_payment' && (
                         <p className="text-yellow-500 font-semibold">Payment Status: Awaiting client payment</p>
@@ -335,7 +339,6 @@ const GigDetailPage = () => {
             )}
 
             {/* Applications (for client) */}
-           {/* Applications (for client) */}
             {isGigOwner && (
             <div className="bg-black/70 backdrop-blur-md rounded-xl shadow-md p-6 mt-8 max-w-4xl mx-auto">
                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Applications ({bids.length})</h2>
@@ -346,7 +349,6 @@ const GigDetailPage = () => {
                         key={bid._id}
                         className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
                     >
-                        {/* Left side: freelancer info */}
                         <div className="flex-1">
                         <h3 className="text-lg font-semibold">
                             <Link
@@ -361,8 +363,6 @@ const GigDetailPage = () => {
                             ₹{bid?.price}
                         </span>
                         </div>
-
-                        {/* Right side: accept button */}
                         {isGigOpen && (
                         <button
                             onClick={() => handleAcceptBid(bid._id)}
@@ -380,20 +380,19 @@ const GigDetailPage = () => {
             </div>
             )}
 
-
             {/* Chat Section */}
             {isChatVisible && (
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg p-6 max-w-4xl mx-auto mt-8 flex flex-col">
                     <h2 className="text-xl sm:text-2xl font-bold mb-4">Messages</h2>
-                    <div className="border rounded-md p-4 h-80 overflow-y-scroll flex flex-col space-y-4 mb-4">
+                    <div ref={messagesContainerRef} className="border rounded-md p-4 h-80 overflow-y-auto flex flex-col space-y-4 mb-4">
                         {messages.length ? messages.map((msg, idx) => (
-                            <div key={msg._id || idx} className={`p-3 max-w-xs ${msg.sender?._id === user?._id ? 'bg-indigo-700 self-end ml-auto rounded-t-2xl rounded-bl-2xl' : 'bg-gray-300 border-gray-200 text-black self-start rounded-t-2xl rounded-br-2xl'}`}>
+                            <div 
+                                key={msg._id || idx} className={`p-3 max-w-xs ${msg.sender?._id === user?._id ? 'bg-indigo-700 self-end ml-auto rounded-t-2xl rounded-bl-2xl' : 'bg-gray-300 border-gray-200 text-black self-start rounded-t-2xl rounded-br-2xl'}`}>
                                 <div className="font-semibold">{msg.sender?.name}</div>
                                 <div>{msg?.content}</div>
                                 <div className="text-xs text-gray-500 mt-1">{new Date(msg?.createdAt).toLocaleString()}</div>
                             </div>
                         )) : <div className="text-center text-gray-500 mt-10">No messages yet.</div>}
-                        <div ref={messagesEndRef}></div>
                     </div>
                     <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-2">
                         <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type message..." className="flex-1 px-4 py-2 border rounded-md" />
