@@ -133,29 +133,27 @@ const deleteGig = asyncHandler(async (req, res) => {
 });
 
 const getGigsByLocation = asyncHandler(async (req, res) => {
-  const { lat, lon, radius } = req.query;
+    const { lat, lon, radius } = req.query;
 
-  if (!lat || !lon || !radius) {
-    res.status(400);
-    throw new Error('Please provide latitude, longitude, and radius in the query.');
-  }
+    if (!lat || !lon || !radius) {
+        res.status(400);
+        throw new Error('Please provide latitude, longitude, and radius in the query.');
+    }
 
-  const latitude = parseFloat(lat);
-  const longitude = parseFloat(lon);
-  const radiusInKm = parseFloat(radius);
+    const radiusInMeters = parseFloat(radius) * 1000;
 
-  // Convert km to radians for $centerSphere
-  const radiusInRadians = radiusInKm / 6371;
+    const gigs = await Gig.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [
+                    [parseFloat(lon), parseFloat(lat)], 
+                    radiusInMeters / 6378100  // Earth radius in meters
+                ],
+            },
+        },
+    }).populate('user', 'name');
 
-  const gigs = await Gig.find({
-    location: {
-      $geoWithin: {
-        $centerSphere: [[longitude, latitude], radiusInRadians],
-      },
-    },
-  }).populate('user', 'name');
-
-  res.json(gigs);
+    res.json(gigs);
 });
 
 
@@ -197,24 +195,17 @@ const freelancerFinishGig = asyncHandler(async (req, res) => {
 // @desc   Create a Razorpay order
 // @route   POST /api/gigs/:id/create-order
 // @access  Private (Client owner of gig only)
-// @desc   Create a Razorpay order (secure for accepted freelancer only)
-// @route  POST /api/gigs/:id/create-order
-// @access Private (Client owner of gig only)
 const createRazorpayOrder = asyncHandler(async (req, res) => {
-  const gig = await Gig.findById(req.params.id).populate({
-    path: 'acceptedBid',
-    populate: { path: 'user', select: 'name' },
-  });
+  const gig = await Gig.findById(req.params.id).populate('acceptedBid');
 
   if (!gig) {
     res.status(404);
     throw new Error('Gig not found');
   }
 
-  // Ensure only the gig owner can create order
   if (gig.user.toString() !== req.user._id.toString()) {
     res.status(401);
-    throw new Error('Not authorized to create payment for this gig.');
+    throw new Error('User not authorized to create a payment order for this gig.');
   }
 
   if (gig.status !== 'awaiting_payment') {
@@ -222,17 +213,19 @@ const createRazorpayOrder = asyncHandler(async (req, res) => {
     throw new Error('Gig must be awaiting payment to create an order.');
   }
 
-  const acceptedFreelancerId = gig.acceptedBid?.user?._id;
-  if (!acceptedFreelancerId) {
-    res.status(400);
-    throw new Error('No freelancer assigned to this gig.');
+  // ✅ Find freelancer profile to get UPI
+  let freelancerProfile = null;
+  if (gig.acceptedBid?.user) {
+    freelancerProfile = await Profile.findOne({ user: gig.acceptedBid.user });
   }
 
-  // Fetch freelancer profile
-  const freelancerProfile = await Profile.findOne({ user: acceptedFreelancerId });
-  if (!freelancerProfile?.upiId) {
+  const { enteredUpiId } = req.body; // client can pass UPI manually if profile has none
+
+  const targetUpiId = freelancerProfile?.upiId || enteredUpiId;
+
+  if (!targetUpiId) {
     res.status(400);
-    throw new Error('Freelancer does not have a UPI ID.');
+    throw new Error('Freelancer has no UPI ID. Please provide one.');
   }
 
   try {
@@ -242,19 +235,19 @@ const createRazorpayOrder = asyncHandler(async (req, res) => {
       receipt: gig._id.toString(),
       payment_capture: 1,
       notes: {
-        freelancerUpi: freelancerProfile.upiId,
-        freelancerId: acceptedFreelancerId.toString(),
+        freelancerUpi: targetUpiId, // ✅ store UPI for reconciliation
+        freelancerId: gig.acceptedBid?.user?.toString(),
       },
     };
 
     const order = await razorpayInstance.orders.create(options);
-    res.status(201).json({
-      order,
-      key: process.env.RAZORPAY_KEY_ID,
-      freelancerUpi: freelancerProfile.upiId,
+    res.status(201).json({ 
+      order, 
+      key: process.env.RAZORPAY_KEY_ID, 
+      freelancerUpi: targetUpiId 
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create Razorpay order.', error: error.message });
+    res.status(500).json({ message: "Failed to create Razorpay order.", error: error.message });
   }
 });
 

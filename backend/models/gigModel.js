@@ -37,7 +37,6 @@ const gigSchema = mongoose.Schema(
                 required: true,
             },
         },
-        locationName: { type: String, required: true }, // <-- new
         status: {
             type: String,
             enum: ['open', 'in-progress', 'awaiting_payment', 'completed', 'cancelled', 'cancellation_pending', 'cancellation_rejected'],
