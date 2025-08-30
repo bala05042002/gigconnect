@@ -93,47 +93,52 @@ const HomePage = () => {
 
       {/* Hero Section */}
       {/* Hero Section with image */}
-      <section className="scroll-section flex flex-col md:flex-row items-center justify-between min-h-screen px-6 py-20 relative z-10">
-        {/* Left: Text Content */}
-        <div className="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-4 drop-shadow-lg">
-            Connect. Create. Succeed.
-          </h1>
-          <p className="text-md sm:text-xl md:text-2xl font-light mb-6 drop-shadow-md text-gray-300">
-            GigConnect is your hyperlocal freelance marketplace. Discover skilled freelancers nearby, post jobs, and collaborate securely — all in one trusted platform.
-          </p>
-          <p className="text-md sm:text-lg mb-8 text-gray-400">
-            Whether you are a client looking for local talent or a freelancer seeking rewarding projects, GigConnect helps you achieve your goals efficiently and safely. Build your profile, showcase your skills, and connect with opportunities in your community.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-            {user?.role === 'client' && (
-              <NavLink
-                to={user ? 'freelancers' : 'login'}
-                className="px-20 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
-              >
-                Find Talent
-              </NavLink>
-            )}
-            {user?.role === 'freelancer' && (
-              <NavLink
-                to={user ? 'gigs' : 'login'}
-                className="px-8 py-3 bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 rounded-full font-semibold transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
-              >
-                Find Gigs
-              </NavLink>
-            )}
-          </div>
-        </div>
+      <section className="relative flex flex-col-reverse md:flex-row items-center justify-between min-h-screen px-6 md:px-16 py-20 bg-gray-900 text-white overflow-hidden">
+  {/* Left: Text Content */}
+  <div className="md:w-1/2 flex flex-col justify-center text-center md:text-left space-y-6">
+    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight drop-shadow-lg">
+      Connect. Create. Succeed.
+    </h1>
+    <p className="text-md sm:text-lg md:text-xl font-light text-gray-300 drop-shadow-md">
+      GigConnect is your hyperlocal freelance marketplace. Discover skilled freelancers nearby, post jobs, and collaborate securely — all in one trusted platform.
+    </p>
+    <p className="text-sm sm:text-md md:text-lg text-gray-400">
+      Whether you are a client looking for local talent or a freelancer seeking rewarding projects, GigConnect helps you achieve your goals efficiently and safely. Build your profile, showcase your skills, and connect with opportunities in your community.
+    </p>
+    <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
+      {user?.role === 'client' && (
+        <NavLink
+          to={user ? 'freelancers' : 'login'}
+          className="px-8 sm:px-12 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-transform duration-300 hover:scale-105 shadow-lg"
+        >
+          Find Talent
+        </NavLink>
+      )}
+      {user?.role === 'freelancer' && (
+        <NavLink
+          to={user ? 'gigs' : 'login'}
+          className="px-8 sm:px-12 py-3 bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 rounded-full font-semibold transition-transform duration-300 hover:scale-105 shadow-lg"
+        >
+          Find Gigs
+        </NavLink>
+      )}
+    </div>
+  </div>
 
-        {/* Right: Hero Image */}
-        <div className="md:w-1/2 flex justify-center md:justify-end md:items-center sm:justify-center mr-30">
-          <img
-            src={icons.banner} // Replace with your image path
-            alt="GigConnect Hero"
-            className="w-full max-w-md rounded-lg shadow-xl"
-          />
-        </div>
-      </section>
+  {/* Right: Hero Image */}
+  <div className="md:w-1/2 flex justify-center md:justify-end items-center mb-10 md:mb-0">
+    <img
+      src={icons.banner} // replace with your image path
+      alt="GigConnect Hero"
+      className="w-full max-w-sm sm:max-w-md md:max-w-lg rounded-lg shadow-2xl object-cover"
+    />
+  </div>
+
+  {/* Optional Background Decorations */}
+  <div className="absolute top-0 left-0 w-72 h-72 bg-indigo-600 rounded-full opacity-20 -z-10 animate-pulse"></div>
+  <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500 rounded-full opacity-15 -z-10 animate-pulse"></div>
+</section>
+
 
 
       {/* Gigs Section (for freelancers) */}
