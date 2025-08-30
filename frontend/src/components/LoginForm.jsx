@@ -32,8 +32,6 @@ const LoginForm = () => {
     <div className="login-page relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-bg">
       
       {/* Animated glowing orb */}
-      <div className="glow-orb"></div>
-
       {/* Glass Form */}
       <form
         onSubmit={onSubmit}

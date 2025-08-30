@@ -35,7 +35,7 @@ const RegisterForm = () => {
     <div className="register-page relative min-h-screen flex items-center justify-center overflow-hidden bg-dark-bg">
       
       {/* Animated glowing orb */}
-      <div className="glow-orb"></div>
+      <div className=""></div>
 
       {/* Glass Form */}
       <form 
