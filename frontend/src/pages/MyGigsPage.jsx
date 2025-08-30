@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import AuthContext from '../context/AuthContext';
+import { icons } from '../Exports';
 
 // Shimmer placeholder component for dark mode
 const GigShimmer = () => (
@@ -37,7 +38,7 @@ const MyGigsPage = () => {
       }
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get(`https://gig-server.onrender.com/api/gigs/mygigs`, config);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/gigs/mygigs`, config);
         setGigs(data);
       } catch (error) {
         toast.error('Failed to fetch your gigs.');
@@ -66,7 +67,7 @@ const MyGigsPage = () => {
   const handleEditSubmit = async (gigId) => {
     try {
       const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(`https://gig-server.onrender.com/api/gigs/${gigId}`, editFormData, config);
+      const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/api/gigs/${gigId}`, editFormData, config);
       setGigs((prev) => prev.map((g) => (g._id === gigId ? data : g)));
       toast.success('Gig updated successfully!');
       setEditingGigId(null);
@@ -143,14 +144,14 @@ const MyGigsPage = () => {
                     className="absolute top-0 right-0 mx-2 my-1 px-2 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                     onClick={() => handleEditClick(gig)}
                   >
-                    Edit
+                    <img src={icons.edit} alt="" className='w-4 h-4 cursor-pointer' />
                   </button>
 
                   <h2 className="text-2xl font-semibold mb-2 truncate">{gig.title}</h2>
                   <p className="text-gray-300 mb-4 line-clamp-3">{gig.description}</p>
                   <div className="text-sm text-gray-200 space-y-1">
                     <p>
-                      Price: <span className="font-medium text-green-400">${gig.price}</span>
+                      Price: <span className="font-medium text-green-400">₹{gig.price}</span>
                     </p>
                     <p>
                       Status: <span className={`font-medium ${gig.status === 'open' ? 'text-green-400' : 'text-yellow-400'}`}>

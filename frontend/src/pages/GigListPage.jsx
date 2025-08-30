@@ -43,7 +43,7 @@ const GigListPage = () => {
     const fetchAllGigs = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`https://gig-server.onrender.com/api/gigs`);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/gigs`);
         setGigs(data);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to fetch gigs.');
@@ -63,7 +63,7 @@ const GigListPage = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `https://gig-server.onrender.com/api/gigs/search/location?lat=${lat}&lon=${lon}&radius=${radius}`
+        `${import.meta.env.VITE_API_URL}api/gigs/search/location?lat=${lat}&lon=${lon}&radius=${radius}`
       );
       setGigs(data);
       toast.success(`${data.length} gigs found nearby!`);
@@ -238,7 +238,7 @@ const GigListPage = () => {
                     <Popup>
                       <div className="font-semibold">{gig.title}</div>
                       <div>{gig.user?.name}</div>
-                      <div>${gig.price}</div>
+                      <div>₹{gig.price}</div>
                     </Popup>
                   </Marker>
                 ))}
@@ -300,7 +300,7 @@ const GigListPage = () => {
                       **Category:** <span className="font-medium text-indigo-400">{gig.category}</span>
                     </p>
                     <p>
-                      **Price:** <span className="font-medium text-green-400">${gig.price}</span>
+                      **Price:** <span className="font-medium text-green-400">₹{gig.price}</span>
                     </p>
                     <p>
                       **Status:**{' '}

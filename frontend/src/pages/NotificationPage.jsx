@@ -26,7 +26,7 @@ const NotificationPage = () => {
       setLoading(true);
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get("https://gig-server.onrender.com/api/notifications", config);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/notifications`, config);
         setNotifications(data || []);
       } catch (err) {
         console.error("Failed to fetch notifications", err);
@@ -53,7 +53,7 @@ const NotificationPage = () => {
   const markAsRead = async (id) => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.put(`https://gig-server.onrender.com/api/notifications/${id}/read`, {}, config);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/read`, {}, config);
 
       // Update state
       setNotifications((prev) =>

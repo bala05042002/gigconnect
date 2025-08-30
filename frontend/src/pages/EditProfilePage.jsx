@@ -1,26 +1,26 @@
-import { useState, useContext, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import AuthContext from '../context/AuthContext';
-import imageCompression from 'browser-image-compression';
+import { useState, useContext, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import AuthContext from "../context/AuthContext";
+import imageCompression from "browser-image-compression";
 
-const CLOUDINARY_UPLOAD_PRESET = 'profile_upload';
-const CLOUDINARY_CLOUD_NAME = 'dlmsik1mu';
+const CLOUDINARY_UPLOAD_PRESET = "profile_upload";
+const CLOUDINARY_CLOUD_NAME = "dlmsik1mu";
 const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 const PLACEHOLDER_AVATAR =
-  'https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small_2x/default-avatar-photo-placeholder-profile-icon-vector.jpg';
+  "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small_2x/default-avatar-photo-placeholder-profile-icon-vector.jpg";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [formData, setFormData] = useState({
-    bio: '',
+    bio: "",
     skills: [],
     portfolio: [],
-    profilePhoto: '',
-    location: { district: '' },
-    upiId: '',
+    profilePhoto: "",
+    location: { district: "" },
+    upiId: "",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -29,24 +29,26 @@ const EditProfilePage = () => {
 
   useEffect(() => {
     if (!user) {
-      toast.error('You must be logged in to edit your profile.');
-      navigate('/login');
+      toast.error("You must be logged in to edit your profile.");
+      navigate("/login");
       return;
     }
 
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(`https://gig-server.onrender.com/api/profiles/${user._id}`);
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/profiles/${user._id}`
+        );
         setFormData({
-          bio: data.bio || '',
+          bio: data.bio || "",
           skills: data.skills || [],
           portfolio: data.portfolio || [],
-          profilePhoto: data.profilePhoto || '',
-          location: data.location || { district: '' },
-          upiId: data.upiId || '',
+          profilePhoto: data.profilePhoto || "",
+          location: data.location || { district: "" },
+          upiId: data.upiId || "",
         });
       } catch (err) {
-        console.log('No existing profile found.');
+        console.log("No existing profile found.");
       } finally {
         setIsLoading(false);
       }
@@ -57,10 +59,10 @@ const EditProfilePage = () => {
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'skills') {
-      setFormData({ ...formData, skills: value.split(',').map((s) => s.trim()) });
-    } else if (name === 'portfolio') {
-      setFormData({ ...formData, portfolio: value.split(',').map((p) => p.trim()) });
+    if (name === "skills") {
+      setFormData({ ...formData, skills: value.split(",").map((s) => s.trim()) });
+    } else if (name === "portfolio") {
+      setFormData({ ...formData, portfolio: value.split(",").map((p) => p.trim()) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -84,8 +86,8 @@ const EditProfilePage = () => {
       }
 
       const form = new FormData();
-      form.append('file', file);
-      form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      form.append("file", file);
+      form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
       const { data } = await axios.post(CLOUDINARY_UPLOAD_URL, form, {
         onUploadProgress: (progressEvent) => {
@@ -95,9 +97,9 @@ const EditProfilePage = () => {
       });
 
       setFormData({ ...formData, profilePhoto: data.secure_url });
-      toast.success('Profile photo uploaded!');
+      toast.success("Profile photo uploaded!");
     } catch (err) {
-      toast.error('Failed to upload photo.');
+      toast.error("Failed to upload photo.");
       console.error(err);
     } finally {
       setUploading(false);
@@ -113,25 +115,79 @@ const EditProfilePage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (user.role === 'freelancer' && formData.upiId && !validateUpi(formData.upiId)) {
-      toast.error('Invalid UPI ID format. Example: username@upi');
+    if (user.role === "freelancer" && formData.upiId && !validateUpi(formData.upiId)) {
+      toast.error("Invalid UPI ID format. Example: username@upi");
       return;
     }
 
     try {
       const config = {
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.token}` },
       };
-      await axios.post('https://gig-server.onrender.com/api/profiles', formData, config);
-      toast.success('Profile updated successfully!');
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles`, formData, config);
+      toast.success("Profile updated successfully!");
       navigate(`/profiles/${user._id}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update profile.');
+      toast.error(err.response?.data?.message || "Failed to update profile.");
     }
   };
 
-  if (isLoading)
-    return <div className="text-center mt-8 text-white font-semibold">Loading profile...</div>;
+  if (isLoading) {
+    // Shimmer skeleton while loading (responsive)
+    return (
+      <div className="min-h-screen bg-gray-900 p-4 md:p-8 flex justify-center items-start">
+        <div className="w-full max-w-lg bg-gray-800/70 backdrop-blur-md border border-gray-700 rounded-2xl p-6 shadow-lg">
+          <div className="flex flex-col items-center mb-6 relative">
+            <div
+              className="w-24 h-24 rounded-full mb-2 animate-pulse"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%)",
+              }}
+            />
+            <div className="h-6 w-44 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+            <div className="h-4 w-36 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+            <div className="h-3 w-28 rounded-md mb-1 animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+            <div className="h-3 w-40 rounded-md mb-3 animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+            <div className="w-full flex justify-center mt-3">
+              <div className="h-8 w-24 rounded-md animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <div className="h-4 w-32 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+              <div className="h-20 rounded-md animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <div className="h-4 w-28 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+                <div className="h-10 rounded-md animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+              </div>
+              <div>
+                <div className="h-4 w-28 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+                <div className="h-10 rounded-md animate-pulse" style={{ background: "rgba(255,255,255,0.02)" }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="h-4 w-40 rounded-md mb-2 animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+              <div className="flex flex-wrap gap-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-8 w-20 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <div className="h-10 w-32 rounded-md animate-pulse" style={{ background: "rgba(255,255,255,0.03)" }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 p-4 md:p-8 flex justify-center items-start">
@@ -146,13 +202,7 @@ const EditProfilePage = () => {
               className="w-24 h-24 rounded-full mb-2 object-cover cursor-pointer border-2 border-indigo-500"
               onClick={handlePhotoClick}
             />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handlePhotoUpload}
-              accept="image/*"
-              className="hidden"
-            />
+            <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} accept="image/*" className="hidden" />
             {uploading && <p className="text-gray-400 mt-1">Uploading... {uploadProgress}%</p>}
           </div>
 
@@ -175,7 +225,7 @@ const EditProfilePage = () => {
             <input
               type="text"
               name="district"
-              value={formData.location?.district || ''}
+              value={formData.location?.district || ""}
               onChange={(e) =>
                 setFormData({
                   ...formData,
@@ -193,7 +243,7 @@ const EditProfilePage = () => {
             <input
               type="text"
               name="skills"
-              value={formData.skills.join(', ')}
+              value={formData.skills.join(", ")}
               onChange={onChange}
               className="w-full px-4 py-2 rounded-md border border-gray-600 bg-gray-900 text-white focus:ring focus:ring-indigo-500 focus:border-indigo-400"
               placeholder="e.g., JavaScript, React, Node.js"
@@ -206,7 +256,7 @@ const EditProfilePage = () => {
             <input
               type="text"
               name="portfolio"
-              value={formData.portfolio.join(', ')}
+              value={formData.portfolio.join(", ")}
               onChange={onChange}
               className="w-full px-4 py-2 rounded-md border border-gray-600 bg-gray-900 text-white focus:ring focus:ring-indigo-500 focus:border-indigo-400"
               placeholder="e.g., link1.com, link2.com"
@@ -214,7 +264,7 @@ const EditProfilePage = () => {
           </div>
 
           {/* UPI ID */}
-          {user.role === 'freelancer' && (
+          {user.role === "freelancer" && (
             <div>
               <label className="block text-white font-medium mb-1">UPI ID</label>
               <input

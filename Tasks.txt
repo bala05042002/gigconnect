@@ -1,9 +1,73 @@
-NANCY :-
+NANCY – CREATING GIG PAGE
 
-    CREATING GIG PAGE:-
-        * To build create gig component with named CreateGigPage.jsx in the frontend.
-        * There is already gig model was there in the gigModel.js in the models in backend.
-        * Please do backend controller for creating CreateGigPage to get the data from that and also update in the router of gigRoutes.js
+    TASKS :
+
+    Frontend (React)
+
+        *Create a new component file named CreateGigPage.jsx inside frontend/src/pages/.
+
+        *Build a form with fields: Title, Description, Price, Location, Category.
+
+        *On submit, call backend API (/api/gigs) using Axios POST request.
+
+        *Add dummy components like GigCard.jsx (just for sample display).
+
+    Backend (Node.js + Express)
+
+        *Go to controllers/gigController.js and create a createGig function:
+
+        *Validate input data.
+
+        *Save new gig using the already available gigModel.js.
+
+        *Return JSON response with success message + created gig.
+
+        *In routes/gigRoutes.js, add a POST route for creating gigs:
+
+        *router.post("/", protect, createGig);
 
 
-** Commit : git commit -m "Initial commit"
+    Git Workflow
+
+        git add .
+        git commit -m "Initial commit"
+        git push origin main
+
+
+KAVIYA :-
+
+    CREATING FREELANCER DASHBOARD
+
+    Tasks:
+
+        Frontend (React)
+
+            *Create a new file FreelancerDashboard.jsx inside frontend/src/pages/.
+
+            *Display logged-in freelancer details:
+
+            *Name, Email, Skills, Portfolio, Reviews, Posted Gigs.
+
+            *Use AuthContext or API (/api/users/profile) to fetch freelancer data.
+
+            *Add sections:
+
+            *Profile Overview
+
+            *My Gigs
+
+            *Reviews
+
+            *Design similar to user profile but extended into a dashboard layout.
+
+        Backend (Node.js + Express)
+
+            *Reuse profile APIs (getUserProfile) from userController.js.
+
+            *(Optional) Add new API /api/freelancers/:id/dashboard if you want dashboard-specific data (like gigs + reviews together).
+
+        Git Workflow
+
+            git add .
+            git commit -m "Initial commit"
+            git push origin main

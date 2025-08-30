@@ -24,7 +24,7 @@ const RegisterForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('https://gig-server.onrender.com/api/users', formData);
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, formData);
       register(data);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');

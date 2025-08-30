@@ -23,6 +23,9 @@ import FAQ from './pages/FAQ';
 import HelpCenter from './pages/HelpCenter';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
+import FreelancerChat from './pages/FreelancerChat';
+import ChattingList from './pages/ChattingList';
+import ChatFromNav from './pages/ChatFromNav';
 
 const App = () => {
   console.log(import.meta.env.VITE_PORT)
@@ -56,6 +59,9 @@ const App = () => {
           <Route path="/help-center" element={<HelpCenter />} /> {/* New route */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* New route */}
           <Route path="/terms-of-service" element={<TermsAndConditions />} /> {/* New route */}
+          <Route path="/freelancerchat" element={<FreelancerChat />} /> {/* New route */}
+          <Route path="/chattinglist" element={<ChattingList />} /> {/* New route */}
+          <Route path="/chattinglist/chatfromnav" element={<ChatFromNav />} /> {/* New route */}
         </Routes>
       </div>
       <Footer />

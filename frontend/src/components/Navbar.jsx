@@ -2,6 +2,7 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import NotificationDropdown from "./NotificationDropdown";
+import { icons } from "../Exports";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -42,7 +43,7 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-4 items-center">
           <Link to="/" className="text-white hover:text-indigo-200">Home</Link>
-          <Link to="/gigs" className="text-white hover:text-indigo-200">Gigs</Link>
+          {user?.role == 'freelancer' && <Link to="/gigs" className="text-white hover:text-indigo-200">Gigs</Link>}
 
           {user && user.role === "client" && (
             <>
@@ -62,6 +63,16 @@ const Navbar = () => {
               <NotificationDropdown />
             </>
           )}
+
+          {
+            user && (
+              <>
+                <Link to={'/chattinglist'} className="text-white cursor-pointer">
+                  <img src={icons.chat} alt="" className="w-6 h-6" />
+                </Link>
+              </>
+            )
+          }
 
           {user ? (
             <>
@@ -127,6 +138,14 @@ const Navbar = () => {
           {user && user.role === "freelancer" && (
             <Link to="/my-freelancer-gigs" className="text-white hover:text-indigo-200" onClick={() => setIsMobileMenuOpen(false)}>My Applied Gigs</Link>
           )}
+
+          {
+            user && (
+              <>
+                <Link to={'/chattinglist'} className="text-white cursor-pointer">Chat</Link>
+              </>
+            )
+          }
 
           {user ? (
             <>

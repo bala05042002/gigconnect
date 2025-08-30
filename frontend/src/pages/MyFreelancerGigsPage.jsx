@@ -19,7 +19,7 @@ const MyFreelancerGigsPage = () => {
       }
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get(`https://gig-server.onrender.com/api/bids/mybids`, config);
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/bids/mybids`, config);
         setBids(data);
       } catch (error) {
         toast.error('Failed to fetch your bids.');

@@ -1,36 +1,42 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
 let socket;
 
 const FreelancerPage = ({ currentUserId }) => {
+  const user = JSON.parse(localStorage.getItem("userInfo"));
   const [freelancers, setFreelancers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [ratings, setRatings] = useState({});
-  const [search, setSearch] = useState({ name: '', skill: '', location: '' });
+  const [search, setSearch] = useState({ name: "", skill: "", location: "" });
   const [onlineUsers, setOnlineUsers] = useState({});
+
+  console.log(user);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket = io('https://gig-server.onrender.com', { query: { userId: currentUserId } });
-    socket.emit('user_online', currentUserId);
+    socket = io(`${import.meta.env.VITE_API_URL}`, { query: { userId: currentUserId } });
+    // optional: inform server that this user is online (server handler must exist)
+    socket.emit("user_online", currentUserId);
 
-    socket.on('update_user_status', ({ userId, status }) => {
-      setOnlineUsers((prev) => ({ ...prev, [userId]: status === 'online' }));
+    socket.on("update_user_status", ({ userId, status }) => {
+      setOnlineUsers((prev) => ({ ...prev, [userId]: status === "online" }));
     });
 
-    return () => socket.disconnect();
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, [currentUserId]);
 
   const fetchFreelancers = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('https://gig-server.onrender.com/api/profiles');
-      const freelancersOnly = data.filter((f) => f.user.role === 'freelancer');
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/profiles`);
+      const freelancersOnly = data.filter((f) => f.user.role === "freelancer");
       setFreelancers(freelancersOnly);
 
       const ratingsData = {};
@@ -38,7 +44,7 @@ const FreelancerPage = ({ currentUserId }) => {
         freelancersOnly.map(async (f) => {
           try {
             const res = await axios.get(
-              `https://gig-server.onrender.com/api/reviews/user/${f.user._id}/average`
+              `${import.meta.env.VITE_API_URL}/api/reviews/user/${f.user._id}/average`
             );
             ratingsData[f.user._id] = res.data;
           } catch {
@@ -48,7 +54,7 @@ const FreelancerPage = ({ currentUserId }) => {
       );
       setRatings(ratingsData);
     } catch (err) {
-      toast.error('Failed to fetch freelancers.');
+      toast.error("Failed to fetch freelancers.");
     } finally {
       setLoading(false);
     }
@@ -56,6 +62,7 @@ const FreelancerPage = ({ currentUserId }) => {
 
   useEffect(() => {
     fetchFreelancers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = freelancers.filter((f) => {
@@ -68,10 +75,6 @@ const FreelancerPage = ({ currentUserId }) => {
       : true;
     return nameMatch && skillMatch && locationMatch;
   });
-
-  const openChat = (freelancerId) => {
-    navigate(`/direct-chat/${freelancerId}`);
-  };
 
   return (
     <div className="min-h-screen bg-gray-900 p-4 md:p-8">
@@ -104,13 +107,47 @@ const FreelancerPage = ({ currentUserId }) => {
         </div>
       </div>
 
-      {/* Freelancer List */}
+      {/* Freelancer List or Shimmer Skeleton */}
       {loading ? (
-        <div className="text-center text-lg font-semibold mt-8 text-white">Loading freelancers...</div>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="relative bg-gray-800/70 backdrop-blur-md border border-gray-700 rounded-2xl p-6 shadow-lg animate-pulse"
+              >
+                <div className="flex flex-col items-center">
+                  <div className="relative">
+                    <div className="w-28 h-28 rounded-full object-cover mb-4 bg-gray-700" />
+                  </div>
+
+                  <div className="h-6 w-40 rounded-md mb-2 bg-gray-700" />
+                  <div className="h-4 w-28 rounded-md mb-2 bg-gray-700" />
+
+                  <div className="flex items-center mb-4 mt-2">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <div key={si} className="h-4 w-4 rounded-full bg-gray-700 mr-1" />
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-2 justify-center">
+                    <div className="h-6 w-20 rounded-full bg-gray-700" />
+                    <div className="h-6 w-20 rounded-full bg-gray-700" />
+                  </div>
+
+                  <div className="flex justify-between w-full mt-4 opacity-60">
+                    <div className="h-5 w-20 rounded-md bg-gray-700" />
+                    <div className="h-8 w-20 rounded-md bg-gray-700" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="text-center text-gray-400 mt-8">No freelancers found.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {filtered.map((freelancer) => (
             <div
               key={freelancer.user._id}
@@ -119,13 +156,13 @@ const FreelancerPage = ({ currentUserId }) => {
               <div className="flex flex-col items-center">
                 <div className="relative">
                   <img
-                    src={freelancer.profilePhoto || '/default-avatar.png'}
+                    src={freelancer.profilePhoto || "/default-avatar.png"}
                     alt={freelancer.user.name}
                     className="w-28 h-28 rounded-full object-cover border-2 border-indigo-500 mb-4"
                   />
                   <span
                     className={`absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${
-                      onlineUsers[freelancer.user._id] ? 'bg-green-400' : 'bg-gray-500'
+                      onlineUsers[freelancer.user._id] ? "bg-green-400" : "bg-gray-500"
                     }`}
                   ></span>
                 </div>
@@ -136,13 +173,9 @@ const FreelancerPage = ({ currentUserId }) => {
                 {ratings[freelancer.user._id] && (
                   <div className="flex items-center mb-2">
                     {Array.from({ length: 5 }).map((_, i) => {
-                      const starFilled =
-                        i < Math.round(ratings[freelancer.user._id].averageRating);
+                      const starFilled = i < Math.round(ratings[freelancer.user._id].averageRating);
                       return (
-                        <span
-                          key={i}
-                          className={`text-yellow-400 text-lg ${starFilled ? '' : 'opacity-40'}`}
-                        >
+                        <span key={i} className={`text-yellow-400 text-lg ${starFilled ? "" : "opacity-40"}`}>
                           ★
                         </span>
                       );
@@ -170,6 +203,14 @@ const FreelancerPage = ({ currentUserId }) => {
                   >
                     View Profile
                   </Link>
+
+                  <div
+                    onClick={() => {
+                      navigate("/freelancerchat", { state: { user: user, currentChat: freelancer } });
+                    }}
+                  >
+                    <button className="text-white">Chat</button>
+                  </div>
                 </div>
               </div>
             </div>

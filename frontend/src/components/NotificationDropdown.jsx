@@ -26,7 +26,7 @@ const NotificationDropdown = () => {
     if (!user) return;
 
     // ✅ Connect socket when user logs in
-    socket = io("https://gig-server.onrender.com", {
+    socket = io(`${import.meta.env.VITE_API_URL}`, {
       query: { userId: user._id }, // send userId to backend
     });
 
@@ -48,7 +48,7 @@ const NotificationDropdown = () => {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         const { data } = await axios.get(
-          "https://gig-server.onrender.com/api/notifications",
+          `${import.meta.env.VITE_API_URL}/api/notifications`,
           config
         );
         setNotifications(data || []);
@@ -78,7 +78,7 @@ const NotificationDropdown = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       await axios.put(
-        `https://gig-server.onrender.com/api/notifications/${id}/read`,
+        `${import.meta.env.VITE_API_URL}/api/notifications/${id}/read`,
         {},
         config
       );
